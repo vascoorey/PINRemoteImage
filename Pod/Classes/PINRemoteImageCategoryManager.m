@@ -116,6 +116,20 @@
                      completion:completion];
 }
 
+static PINRemoteImageManager *_imageManager;
+
++ (void)setImageManager:(PINRemoteImageManager *)imageManager {
+    @synchronized(self) {
+        _imageManager = imageManager;
+    }
+}
+
++ (PINRemoteImageManager *)imageManager {
+    @synchronized(self) {
+        return _imageManager ?: [PINRemoteImageManager sharedImageManager];
+    }
+}
+
 + (NSUUID *)downloadImageOperationUUIDOnView:(id <PINRemoteImageCategory>)view
 {
     return (NSUUID *)objc_getAssociatedObject(view, @selector(downloadImageOperationUUIDOnView:));
@@ -139,7 +153,7 @@
 + (void)cancelImageDownloadOnView:(id <PINRemoteImageCategory>)view
 {
     if ([self downloadImageOperationUUIDOnView:view]) {
-        [[PINRemoteImageManager sharedImageManager] cancelTaskWithUUID:[self downloadImageOperationUUIDOnView:view]];
+        [[self imageManager] cancelTaskWithUUID:[self downloadImageOperationUUIDOnView:view]];
         [self setDownloadImageOperationUUID:nil onView:view];
     }
 }
@@ -257,18 +271,18 @@
     
     NSUUID *downloadImageOperationUUID = nil;
     if (urls.count > 1) {
-        downloadImageOperationUUID = [[PINRemoteImageManager sharedImageManager] downloadImageWithURLs:urls
+        downloadImageOperationUUID = [[self imageManager] downloadImageWithURLs:urls
                                                                                                options:options
                                                                                               progress:internalProgress
                                                                                             completion:internalCompletion];
     } else if (processorKey.length > 0 && processor) {
-        downloadImageOperationUUID = [[PINRemoteImageManager sharedImageManager] downloadImageWithURL:urls[0]
+        downloadImageOperationUUID = [[self imageManager] downloadImageWithURL:urls[0]
                                                                                               options:options
                                                                                          processorKey:processorKey
                                                                                             processor:processor
                                                                                            completion:internalCompletion];
     } else {
-        downloadImageOperationUUID = [[PINRemoteImageManager sharedImageManager] downloadImageWithURL:urls[0]
+        downloadImageOperationUUID = [[self imageManager] downloadImageWithURL:urls[0]
                                                                                               options:options
                                                                                              progress:internalProgress
                                                                                            completion:internalCompletion];

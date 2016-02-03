@@ -14,6 +14,7 @@
 
 #import "PINRemoteImageManager.h"
 
+@class PINRemoteImageManager;
 @protocol PINRemoteImageCategory;
 
 /**
@@ -83,6 +84,11 @@
 + (BOOL)updateWithProgressOnView:(nonnull id <PINRemoteImageCategory>)view;
 
 + (void)setUpdateWithProgressOnView:(BOOL)updateWithProgress onView:(nonnull id <PINRemoteImageCategory>)view;
+
+/**
+ If no \c PINRemoteImageManager is set then `[PINRemoteImageManager sharedManager]` will be used.
+ */
++ (void)setImageManager:(PINRemoteImageManager *)imageManager;
 
 @end
 
